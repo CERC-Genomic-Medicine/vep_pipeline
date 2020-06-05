@@ -31,15 +31,14 @@ More detailed instructions on how to set up LoFtee are [here](https://github.com
 1. You must clone LoFtee repository into your local `vep_cache` directory:
    ```
    cd vep_cache
-   git clone https://github.com/konradjk/loftee.git
-   ```
-
-2. Switch to the GRCh38 branch (or the branch you need):
-   ```
+   git clone https://github.com/konradjk/loftee.git loftee_GRCh37
+   git clone https://github.com/konradjk/loftee.git loftee_GRCh38
+   cd loftee_GRCh38
    git checkout grch38
+   cd ..
    ```
    
-3. Download all necessary databases (based on human genome build you plan to use) as described [here](https://github.com/konradjk/loftee). BUT: all these files must be stored under your `vep_cache` directory e.g. `vep_cache/loftee_b38`.
+2. Download all necessary databases (based on human genome build you plan to use) as described [here](https://github.com/konradjk/loftee) into your `vep_cache` directory into folders `loftee_db_GRCh37` and 'loftee_db_GRCh38'.
 
 ### 1.3. Conclusion
 
@@ -47,8 +46,10 @@ After above steps, your local `vep_cache` directory should be similar to this:
 ```
 |- vep_cache
    |- homo_sapiens (directory with VEP databases)
-   |- loftee (loftee scripts)
-   |- loftee_b38 (loftee databases)
+   |- loftee_GRCh37 (loftee scripts for build GRCh37)
+   |- loftee_GRCh38 (loftee scripts for build GRCh38)
+   |- loftee_db_GRCh37 (loftee databases for build GRCh37)
+   |- loftee_db_GRCh38 (loftee databases for build GRCh38)
 ```
 
 ## 2. Running
@@ -60,10 +61,9 @@ After above steps, your local `vep_cache` directory should be similar to this:
 
 2. Modify `nextflow.config` configuration file.
      * `params.vcfs` -- path to your VCF/BCF file(s). You can use `glob` expressions to selecect multiple files.
+     * `params.assembly` -- set to "GRCh37" or "GRCh38".
      * `params.vep_cache` -- full path to your local `vep_cache` directory.
      * `params.vep_flags` -- flags you want to pass to VEP.
-     * `params.loftee_dir` -- name of the directory within `vep_cache` with LoFtee scripts.
-     * `params.loftee_db_dir` -- name of the directory within `vep_cache` with LoFtee database files.
      * `process.container` -- full path to the `Singularity` image file (see step 1.1.).
      * `executor.$slurm.queueSize` -- maximal number of SLURM jobs to submit at once.
   
