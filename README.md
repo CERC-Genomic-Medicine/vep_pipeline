@@ -29,15 +29,16 @@ This section describes how to set up VEP, download all necessary cache files, an
 More detailed instructions on how to set up LoFtee are [here](https://github.com/konradjk/loftee).
 
 1. You must clone LoFtee repository into your local `vep_cache` directory:
-```
-cd vep_cache
-git clone https://github.com/konradjk/loftee.git
-```
+   ```
+   cd vep_cache
+   git clone https://github.com/konradjk/loftee.git
+   ```
 
 2. Switch to the GRCh38 branch (or the branch you need):
-```
-git checkout grch38
-```
+   ```
+   git checkout grch38
+   ```
+   
 3. Download all necessary databases (based on human genome build you plan to use) as described [here](https://github.com/konradjk/loftee). BUT: all these files must be stored under your `vep_cache` directory e.g. `vep_cache/loftee_b38`.
 
 ### 1.3. Conclusion
