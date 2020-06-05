@@ -6,23 +6,23 @@ This section describes how to set up VEP, download all necessary cache files, an
 ### 1.1. Setting up VEP
 
 1. Load `Singularity` module:
-```
-module load singularity
-```
+   ```
+   module load singularity
+   ```
 
 2. Build `Singularity` image:
-```
-singularity build vep.sif docker://dtaliun/vep_samtools:latest
-```
-This step may take around 1h.
+   ```
+   singularity build vep.sif docker://dtaliun/vep_samtools:latest
+   ```
+   This step may take around 1h.
 
 3. Download VEP cache files into local `vep_cache` directory:
-```
-mkdir `pwd`/vep_cache
-export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-singularity -B `pwd`/vep_cache:/opt/vep/.vep vep.sif -a cf -s homo_sapiens -y GRCh38 -c /opt/vep/.vep
-```
-This step may take more than 1h.
+   ```
+   mkdir `pwd`/vep_cache
+   export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+   singularity run -B `pwd`/vep_cache:/opt/vep/.vep vep.sif INSTALL.pl -a cf -s homo_sapiens -y GRCh38 -c /opt/vep/.vep
+   ```
+   This step may take more than 1h.
 
 ### 1.2. Setting up LoFtee
 
