@@ -34,9 +34,20 @@ process annotate_chunks {
 
         publishDir "results/logs", pattern: "*.vep.log", mode: "move"
 
-	"""
-	bcftools view -G ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --format vcf --vcf --compress_output bgzip --force_overwrite --no_stats --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/${params.loftee_dir},human_ancestor_fa:/opt/vep/.vep/${params.loftee_db_dir}/human_ancestor.fa.gz,gerp_bigwig:/opt/vep/.vep/${params.loftee_db_dir}/gerp_conservation_scores.homo_sapiens.GRCh38.bw,conservation_file:/opt/vep/.vep/${params.loftee_db_dir}/loftee.sql --dir_plugins /opt/vep/.vep/${params.loftee_dir} ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.log
- 	"""
+	script:
+	if (params.assembly == "GRCh38")
+		"""
+		loftee_args=human_ancestor_fa:/opt/vep/.vep/loftee_db_${params.assembly}/human_ancestor.fa.gz,gerp_bigwig:/opt/vep/.vep/loftee_db_${params.assembly}/gerp_conservation_scores.homo_sapiens.GRCh38.bw,conservation_file:/opt/vep/.vep/loftee_db_${params.assembly}/loftee.sql
+		bcftools view -G ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --no_stats --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.log
+	 	"""
+	else if (params.assembly == "GRCh37")
+		"""
+		loftee_args=human_ancestor_fa:/opt/vep/.vep/loftee_db_${params.assembly}/human_ancestor.fa.gz,conservation_file:/opt/vep/.vep/loftee_db_${params.assembly}/phylocsf_gerp.sql
+		bcftools view -G ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --no_stats --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.log
+
+		"""
+	else
+		error "Invalid assembly name: ${params.assembly}"
 }
 
 
