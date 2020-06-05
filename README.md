@@ -58,13 +58,13 @@ After above steps, your local `vep_cache` directory should be similar to this:
    ```
 
 2. Modify `nextflow.config` configuration file.
-  * `params.vcfs` -- path to your VCF/BCF file(s). You can use `glob` expressions to selecect multiple files.
-  * `params.vep_cache` -- full path to your local `vep_cache` directory.
-  * `params.vep_flags` -- flags you want to pass to VEP.
-  * `params.loftee_dir` -- name of the directory within `vep_cache` with LoFtee scripts.
-  * `params.loftee_db_dir` -- name of the directory within `vep_cache` with LoFtee database files.
-  * `process.container` -- full path to the `Singularity` image file (see step 1.1.).
-  * `executor.$slurm.queueSize` -- maximal number of SLURM jobs to submit at once.
+     * `params.vcfs` -- path to your VCF/BCF file(s). You can use `glob` expressions to selecect multiple files.
+     * `params.vep_cache` -- full path to your local `vep_cache` directory.
+     * `params.vep_flags` -- flags you want to pass to VEP.
+     * `params.loftee_dir` -- name of the directory within `vep_cache` with LoFtee scripts.
+     * `params.loftee_db_dir` -- name of the directory within `vep_cache` with LoFtee database files.
+     * `process.container` -- full path to the `Singularity` image file (see step 1.1.).
+     * `executor.$slurm.queueSize` -- maximal number of SLURM jobs to submit at once.
   
 3. Run pipeline:
    ```
