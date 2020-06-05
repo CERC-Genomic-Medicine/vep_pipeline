@@ -1,4 +1,4 @@
-# vep_pipeline
+# VEP variant annotation pipeline
 
 ## 1. Installation
 This section describes how to set up VEP, download all necessary cache files, and install LoFtee plugin.
@@ -87,7 +87,7 @@ After above steps, your local `vep_cache` directory should be similar to this:
    module load singularity
    sbatch --time=2:00:00 --ntasks=1 --mem-per-cpu=16G --wrap="nextflow run Annotate.nf -w ~/scratch/work_directory"
    ```
-   Make sure you specify enough time. VEP annotation is typically fast, but total `nextflow` execution time will depend how busy the SLURM queue is.
+   Make sure you specify enough time. VEP annotation is typically fast, but total `nextflow` execution time will depend on how busy the SLURM queue is.
 
 2. Sometimes `nextflow` will crash with error `Failed to submit process to grid scheduler for execution`. Most probably the SLURM queue was too busy and thus slow to respond. Your results were not lost, just resume `nextflow` execution with the following command and `nextflow` will continue from where it finished:
    ```
