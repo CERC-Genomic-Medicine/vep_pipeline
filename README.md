@@ -53,9 +53,9 @@ After above steps, your local `vep_cache` directory should be similar to this:
 ## 2. Running
 
 1. Clone this repository to the directory where you will run the pipeline:
-```
-git clone https://github.com/CERC-Genomic-Medicine/vep_pipeline.git
-```
+   ```
+   git clone https://github.com/CERC-Genomic-Medicine/vep_pipeline.git
+   ```
 
 2. Modify `nextflow.config` configuration file.
   * `params.vcfs` -- path to your VCF/BCF file(s). You can use `glob` expressions to selecect multiple files.
@@ -67,12 +67,12 @@ git clone https://github.com/CERC-Genomic-Medicine/vep_pipeline.git
   * `executor.$slurm.queueSize` -- maximal number of SLURM jobs to submit at once.
   
 3. Run pipeline:
-```
-module load nextflow
-module load singularity
-nextflow run Annotate.nf -w ~/scratch/work_directory
-```
-Important: when working on Compute Canada HPC, set working directory to ~/scratch/\<new directory name\>. This will speed up IO and also save space on your `project` partition. After the execution, if there were no errors and you are happy with the results, you can remove this working directory.
+   ```
+   module load nextflow
+   module load singularity
+   nextflow run Annotate.nf -w ~/scratch/work_directory
+   ```
+   Important: when working on Compute Canada HPC, set working directory to ~/scratch/\<new directory name\>. This will speed up IO and also save space on your `project` partition. After the execution, if there were no errors and you are happy with the results, you can remove this working directory.
   
 ## 3. Known pitfalls
 
