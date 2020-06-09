@@ -94,3 +94,5 @@ After above steps, your local `vep_cache` directory should be similar to this:
    ```
    nextflow run Annotate.nf -w ~/scratch/work_directory -resume
    ```
+   
+3. If `nextflow` crashes with error `libnet.so: failed to map segment from shared object`, then try to increase the amount of memory in your `salloc` or `sbatch` job.
