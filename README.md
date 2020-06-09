@@ -85,7 +85,7 @@ After above steps, your local `vep_cache` directory should be similar to this:
    ```
    module load nextflow
    module load singularity
-   sbatch --time=2:00:00 --ntasks=1 --mem-per-cpu=16G --wrap="nextflow run Annotate.nf -w ~/scratch/work_directory"
+   sbatch --time=2:00:00 --ntasks=1 --mem-per-cpu=16G --wrap="nextflow run Annotation.nf -w ~/scratch/work_directory"
    ```
    Make sure you specify enough time. VEP annotation is typically fast, but total `nextflow` execution time will depend on how busy the SLURM queue is.
 
