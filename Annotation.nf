@@ -54,6 +54,8 @@ process annotate_chunks {
 
 
 process concatenate_chunks {
+	errorStrategy "retry"
+	maxRetries 3
 	cpus 1
 
 	input:
