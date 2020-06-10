@@ -21,6 +21,8 @@ chunks = vcfs.combine(windows)
 
 
 process annotate_chunks {
+	errorStrategy "retry"
+	maxRetries 3
 	cpus 1
 
 	containerOptions "-B ${params.vep_cache}:/opt/vep/.vep"
