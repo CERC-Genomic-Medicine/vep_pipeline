@@ -40,7 +40,38 @@ More detailed instructions on how to set up LoFtee are [here](https://github.com
    
 2. Download all necessary databases (based on human genome build you plan to use) as described [here](https://github.com/konradjk/loftee) into your `vep_cache` directory into folders `loftee_db_GRCh37` and `loftee_db_GRCh38`.
 
-### 1.3. Conclusion
+### 1.3. Setting up CADD
+
+1. Download VEP plugins into `vep_cache` directory:
+   ```
+   cd vep_cache
+   git clone https://github.com/Ensembl/VEP_plugins.git Plugins
+   cd ..
+   ```
+2. Download CADD scores for GRCh37 and GRCh38 builds
+   ```
+   cd vep_cache
+   
+   mkdir CADD_GRCh37
+   cd CADD_GRCh37
+   wget https://krishna.gs.washington.edu/download/CADD/v1.6/GRCh37/whole_genome_SNVs.tsv.gz
+   wget https://krishna.gs.washington.edu/download/CADD/v1.6/GRCh37/whole_genome_SNVs.tsv.gz.tbi
+   wget https://krishna.gs.washington.edu/download/CADD/v1.6/GRCh37/InDels.tsv.gz
+   wget https://krishna.gs.washington.edu/download/CADD/v1.6/GRCh37/InDels.tsv.gz.tbi
+   cd ..
+   
+   mkdir CADD_GRCh38
+   cd CADD_GRCh38
+   wget https://krishna.gs.washington.edu/download/CADD/v1.6/GRCh38/whole_genome_SNVs.tsv.gz
+   wget https://krishna.gs.washington.edu/download/CADD/v1.6/GRCh38/whole_genome_SNVs.tsv.gz.tbi
+   wget https://krishna.gs.washington.edu/download/CADD/v1.5/GRCh38/InDels.tsv.gz
+   wget https://krishna.gs.washington.edu/download/CADD/v1.5/GRCh38/InDels.tsv.gz.tbi
+   cd ..
+   
+   cd ..
+   ```
+
+### 1.4. Conclusion
 
 After above steps, your local `vep_cache` directory should be similar to this:
 ```
