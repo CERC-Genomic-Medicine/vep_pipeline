@@ -64,6 +64,7 @@ After above steps, your local `vep_cache` directory should be similar to this:
      * `params.assembly` -- set to "GRCh37" or "GRCh38".
      * `params.vep_cache` -- full path to your local `vep_cache` directory.
      * `params.vep_flags` -- flags you want to pass to VEP.
+     * `params.loftee_flags` -- comma-separated list of additional LoFtee flags (with leading comma). Flags `loftee_path`, `gerp_bigwig`, `human_ancestor_fa`, and `conservation_file` are set automatically based on the selected `assembly`.
      * `process.container` -- full path to the `Singularity` image file (see step 1.1.).
      * `executor.$slurm.queueSize` -- maximal number of SLURM jobs to submit at once.
   
@@ -93,3 +94,5 @@ After above steps, your local `vep_cache` directory should be similar to this:
    ```
    nextflow run Annotate.nf -w ~/scratch/work_directory -resume
    ```
+   
+3. If `nextflow` crashes with error `libnet.so: failed to map segment from shared object`, then try to increase the amount of memory in your `salloc` or `sbatch` job.
