@@ -81,6 +81,9 @@ After above steps, your local `vep_cache` directory should be similar to this:
    |- loftee_GRCh38 (loftee scripts for build GRCh38)
    |- loftee_db_GRCh37 (loftee databases for build GRCh37)
    |- loftee_db_GRCh38 (loftee databases for build GRCh38)
+   |- Plugins (CADD plugin)
+   |- CADD_GRCh37 (CADD scores for build GRCh37)
+   |- CADD_GRCh38 (CADD scores for build GRCh38)
 ```
 
 ## 2. Running
