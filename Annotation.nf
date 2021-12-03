@@ -1,13 +1,20 @@
+def range = 1..300000000
+def step = params.window_size
+
+
+windows = Channel.from(range.by(step)).map { w -> [ w, w + step - 1 ] }
+
 
 process vcf_by_chrom {
+	cache "lenient"
 	executor "local"
 	cpus 1
 
 	input:
-	set file(vcf), file(vcf_index), val(base) from Channel.fromPath(params.vcfs).map{ vcf -> [ vcf, vcf + ".tbi", vcf.getParent() ] }
+	set file(vcf), file(vcf_index) from Channel.fromPath(params.vcfs).map{ vcf -> [ vcf, vcf + ".tbi" ] }
 
 	output:
-	set stdout, val(base), file(vcf), file(vcf_index) into vcfs
+	set stdout, file(vcf), file(vcf_index) into vcfs
 
 	"""
 	tabix -l ${vcf} | tr "\n" ","
@@ -15,26 +22,26 @@ process vcf_by_chrom {
 }
 
 
-windows = Channel.from((1..300000000).by(params.window_size)).map { w -> [ w, w + params.window_size - 1 ] }
-vcfs = vcfs.flatMap { chroms, base, vcf, vcf_index -> chroms.split(',').collect { [it, base, vcf, vcf_index] }}
-chunks = vcfs.combine(windows)
+vcfs = vcfs.flatMap({ chroms, vcf, vcf_index -> chroms.split(',').collect { [it, vcf, vcf_index] }}).toSortedList({a, b -> a[0] <=> b[0]}).flatMap({it})
+chunks =  vcfs.combine(windows)
 
 
 process annotate_chunks {
-	errorStrategy "retry"
+	cache "lenient"
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return "retry" }
 	maxRetries 3
 	cpus 1
 
 	containerOptions "-B ${params.vep_cache}:/opt/vep/.vep"
 
 	input:
-	set val(chrom), val(base), file(vcf), file(vcf_index), val(start), val(stop) from chunks
+	set val(chrom), file(vcf), file(vcf_index), val(start), val(stop) from chunks
 
 	output:
 	tuple val(chrom), val("${vcf.getBaseName()}"), file("${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.vcf.gz") into annotated_chunks
 	file "*.vep.log"
 
-        publishDir "results/logs", pattern: "*.vep.log", mode: "move"
+        publishDir "results/logs", pattern: "*.vep.log", mode: "copy"
 
 	script:
 	if (params.assembly == "GRCh38")
@@ -56,6 +63,7 @@ process annotate_chunks {
 
 
 process concatenate_chunks {
+	cache "lenient"
 	errorStrategy "retry"
 	maxRetries 3
 	cpus 1
@@ -66,12 +74,12 @@ process concatenate_chunks {
         output:
         set file("${base_name}.${chrom}.vep.vcf.gz"), file("${base_name}.${chrom}.vep.vcf.gz.csi") into concatenated
 
-        publishDir "results", mode: "move"
+        publishDir "results", mode: "copy"
 	
 	"""
 	for f in ${annotated_vcfs}; do bcftools index \${f}; done
 	for f in ${annotated_vcfs}; do echo "\${f}"; done | sort -V > files.txt
-	bcftools concat -f files.txt -Oz -o ${base_name}.${chrom}.vep.vcf.gz
+	bcftools concat -a -f files.txt -Oz -o ${base_name}.${chrom}.vep.vcf.gz
         bcftools index ${base_name}.${chrom}.vep.vcf.gz
 	"""
 }
