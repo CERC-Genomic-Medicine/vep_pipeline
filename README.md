@@ -71,7 +71,11 @@ More detailed instructions on how to set up LoFtee are [here](https://github.com
    cd ..
    ```
 
-### 1.4. Conclusion
+### 1.4. Adding custom VEP plugins
+
+1. Copy `Plugins/CONTEXT.pm` file from this repository to the `vep_cache/Plugins` directory.
+
+### 1.5. Conclusion
 
 After above steps, your local `vep_cache` directory should be similar to this:
 ```
