@@ -52,12 +52,16 @@ sub run {
   if ($vf->{start} != $vf->{end}) {
      return {};
   }
+
+  my $allele = $tva->variation_feature_seq;
+  unless ($allele =~ /^[ACGT]$/) {
+     return {};
+  }
  
   my $ref_slice = $vf->slice();
   my $seq_5mer = $ref_slice->subseq($vf->{start} - 2, $vf->{end} + 2, 1);
 
   return { SEQ_5MER => $seq_5mer };
 }
-
 
 1;
