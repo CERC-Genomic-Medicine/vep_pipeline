@@ -6,6 +6,8 @@ windows = Channel.from(range.by(step)).map { w -> [ w, w + step - 1 ] }
 
 
 process vcf_by_chrom {
+	label "VEP"
+
 	cache "lenient"
 	executor "local"
 	cpus 1
@@ -27,6 +29,8 @@ chunks =  vcfs.combine(windows)
 
 
 process annotate_chunks {
+	label "VEP"
+
 	cache "lenient"
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return "retry" }
 	maxRetries 3
@@ -63,6 +67,8 @@ process annotate_chunks {
 
 
 process concatenate_chunks {
+	label "VEP"
+
 	cache "lenient"
 	errorStrategy "retry"
 	maxRetries 3
@@ -72,7 +78,7 @@ process concatenate_chunks {
 	set val(chrom), val(base_name), file(annotated_vcfs) from annotated_chunks.groupTuple(by: [0, 1])
 
         output:
-        set file("${base_name}.${chrom}.vep.vcf.gz"), file("${base_name}.${chrom}.vep.vcf.gz.csi") into concatenated
+        set val(chrom), file("${base_name}.${chrom}.vep.vcf.gz"), file("${base_name}.${chrom}.vep.vcf.gz.csi") into concatenated
 
         publishDir "results", mode: "copy"
 	
@@ -82,4 +88,26 @@ process concatenate_chunks {
 	bcftools concat -a -f files.txt -Oz -o ${base_name}.${chrom}.vep.vcf.gz
         bcftools index ${base_name}.${chrom}.vep.vcf.gz
 	"""
+}
+
+
+process summarize {
+        cache "lenient"
+ 	errorStrategy "retry"
+	maxRetries 3
+ 	cpus 1
+
+        beforeScript "source ${params.py_venv}"
+
+        input:
+        set val(chrom), file(vcf), file(vcf_index) from concatenated
+
+        output:
+        file "*.summary.txt" into summarized
+
+        publishDir "results/summary", pattern: "*.summary.txt", mode: "copy"
+
+        """
+        variant_summary.py -a ${vcf} -o ${chrom}.summary.txt
+        """
 }
