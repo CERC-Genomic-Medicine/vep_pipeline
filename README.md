@@ -5,7 +5,7 @@
 The following software is required:
 1. Singularity (tested with version 3.8.5)
 2. Nextflow (tested with version 21)
-3. Python 3 (tested with version 3.7.7) with the following packages: 
+3. Python 3 (tested with version 3.7.7) with the following packages: pysam, nbconvert, ipykernel, pandas.
 
 ## 1. Installation
 This section describes how to set up VEP, download all necessary cache files, and install LoFtee plugin.
