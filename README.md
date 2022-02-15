@@ -1,6 +1,6 @@
 # VEP variant annotation pipeline
 
-## 0. Requirements
+## Prerequisites
 
 The following software is required:
 - Singularity (tested with version 3.8.5)
