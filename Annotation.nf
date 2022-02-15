@@ -32,7 +32,8 @@ process annotate_chunks {
 	label "VEP"
 
 	cache "lenient"
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return "retry" }
+        scratch true
+        errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return "retry" }
 	maxRetries 3
 	cpus 1
 
@@ -50,13 +51,13 @@ process annotate_chunks {
 	script:
 	if (params.assembly == "GRCh38")
 		"""
-		export PERL5LIB=/opt/vep/.vep/Plugins/:$PERL5LIB
+		export PERL5LIB=/opt/vep/.vep/Plugins/:\$PERL5LIB
 		loftee_args=human_ancestor_fa:/opt/vep/.vep/loftee_db_${params.assembly}/human_ancestor.fa.gz,gerp_bigwig:/opt/vep/.vep/loftee_db_${params.assembly}/gerp_conservation_scores.homo_sapiens.GRCh38.bw,conservation_file:/opt/vep/.vep/loftee_db_${params.assembly}/loftee.sql${params.loftee_flags}
 		bcftools view -G ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --no_stats --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} --plugin CADD,/opt/vep/.vep/CADD_${params.assembly}/whole_genome_SNVs.tsv.gz,/opt/vep/.vep/CADD_${params.assembly}/InDels.tsv.gz --plugin CONTEXT ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.log
 	 	"""
 	else if (params.assembly == "GRCh37")
 		"""
-		export PERL5LIB=/opt/vep/.vep/Plugins/:$PERL5LIB
+		export PERL5LIB=/opt/vep/.vep/Plugins/:\$PERL5LIB
 		loftee_args=human_ancestor_fa:/opt/vep/.vep/loftee_db_${params.assembly}/human_ancestor.fa.gz,conservation_file:/opt/vep/.vep/loftee_db_${params.assembly}/phylocsf_gerp.sql${params.loftee_flags}
 		bcftools view -G ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --no_stats --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} --plugin CADD,/opt/vep/.vep/CADD_${params.assembly}/whole_genome_SNVs.tsv.gz,/opt/vep/.vep/CADD_${params.assembly}/InDels.tsv.gz --plugin CONTEXT ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getBaseName()}.${chrom}_${start}_${stop}.vep.log
 
@@ -92,12 +93,12 @@ process concatenate_chunks {
 
 
 process summarize {
-        cache "lenient"
+	label "SUMMARY"
+
+	cache "lenient"
  	errorStrategy "retry"
 	maxRetries 3
- 	cpus 1
-
-        beforeScript "source ${params.py_venv}"
+        cpus 1
 
         input:
         set val(chrom), file(vcf), file(vcf_index) from concatenated
@@ -108,6 +109,31 @@ process summarize {
         publishDir "results/summary", pattern: "*.summary.txt", mode: "copy"
 
         """
-        variant_summary.py -a ${vcf} -o ${chrom}.summary.txt
+	variant_summary.py -a ${vcf} -o ${chrom}.summary.txt
         """
+}
+
+
+process notebooks {
+	label "SUMMARY"
+
+	cache "lenient"
+	executor "local"
+	cpus 1
+
+	input:
+	file(summaries) from summarized.collect()
+
+	output:
+	file "*.html" into summarized_html
+
+	publishDir "results/", pattern: "*.html", mode: "copy"
+
+	"""
+	cp $workflow.projectDir/JNotebooks/*.ipynb .
+	jupyter nbconvert --to html autosomal_pass.ipynb --execute --no-input --ExecutePreprocessor.timeout=1200
+	jupyter nbconvert --to html autosomal_fail.ipynb --execute --no-input --ExecutePreprocessor.timeout=1200
+	jupyter nbconvert --to html all_pass.ipynb --execute --no-input --ExecutePreprocessor.timeout=1200
+	jupyter nbconvert --to html all_fail.ipynb --execute --no-input --ExecutePreprocessor.timeout=1200
+	"""
 }
