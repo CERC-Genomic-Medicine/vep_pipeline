@@ -119,6 +119,8 @@ def read_vcf(filename):
                 seq_5mer = set()
                 rsIds = set()
                 allele_consequences = set()
+                if i not in allele_effects:
+                    continue
                 for allele_effect in  allele_effects[i]:
                     if allele_effect['SEQ_5MER']:
                         seq_5mer.add(allele_effect['SEQ_5MER'])
