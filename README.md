@@ -19,7 +19,8 @@ This section describes how to set up VEP, download all necessary cache files, an
 
 2. Build `Singularity` image:
    ```
-   singularity build vep.sif docker://dtaliun/vep_samtools:latest
+   singularity pull docker://ensemblorg/ensembl-vep:latest
+   mv ensembl-vep_latest.sif vep.sif
    ```
    This step may take around 1h.
 
