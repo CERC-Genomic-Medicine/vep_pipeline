@@ -46,7 +46,7 @@ More detailed instructions on how to set up LoFtee are [here](https://github.com
    cd ..
    ```
    
-2. Download all necessary databases (based on human genome build you plan to use) as described [here](https://github.com/konradjk/loftee) into your `vep_cache` directory into folders `loftee_db_GRCh37` and `loftee_db_GRCh38`.
+2. Download all necessary databases (based on human genome build you plan to use) as described [here](https://github.com/konradjk/loftee) into your `vep_cache` directory into folders `loftee_db_GRCh37` and `loftee_db_GRCh38`. These should include: GERP conservation scores (only for GRCh38), human_ancestor.fa files, SQL databases with PhyloCSF metrics (SQL files must be unzipped).
 
 ### 1.3. Setting up CADD
 
