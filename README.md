@@ -82,6 +82,11 @@ More detailed instructions on how to set up LoFtee are [here](https://github.com
 ### 1.4. Adding custom VEP plugins
 
 1. Copy `Plugins/CONTEXT.pm` file from this repository to the `vep_cache/Plugins` directory.
+   ```
+   cd Plungins
+   wget https://raw.githubusercontent.com/CERC-Genomic-Medicine/vep_pipeline/master/Plugins/CONTEXT.pm
+   cd ..
+   ```
 
 ### 1.5. Conclusion
 
