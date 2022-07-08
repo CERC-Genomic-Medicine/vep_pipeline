@@ -17,7 +17,7 @@ This section describes how to set up VEP, download all necessary cache files, an
    module load singularity
    ```
 
-2. Build `Singularity` image with additional tools (e.g. `bcftools` and `DBD::SQLite`).
+2. Build `Singularity` image with additional tools (e.g. `samtools`, `bcftools` and `DBD::SQLite`).
 
    Create `vep.def` Singularity definition file with the following content:
    ```
@@ -26,6 +26,7 @@ This section describes how to set up VEP, download all necessary cache files, an
    
    %post
         apt-get update -y
+        apt-get install -y samtools
         apt-get install -y bcftools
         apt-get install -y libdbd-sqlite3-perl
    ```
