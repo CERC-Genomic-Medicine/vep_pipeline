@@ -23,6 +23,16 @@ This section describes how to set up VEP, download all necessary cache files, an
    mv ensembl-vep_latest.sif vep.sif
    ```
    This step may take around 1h.
+   
+   P.S. If you need to install additional packages/modules into the container, you can do this by creating Singularity's `*.def` definition file with additional post-installation commands and running `singularity build --remote <custom VEP container name>.sif <filename>.def`. Example of the definition file:
+   ```
+   Bootstrap: docker
+   From: ensemblorg/ensembl-vep:latest
+   
+   %post
+        apt-get update -y
+        apt-get install -y libdbd-sqlite3-perl
+   ```
 
 3. Download VEP cache files into local `vep_cache` directory:
    ```
