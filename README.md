@@ -17,22 +17,25 @@ This section describes how to set up VEP, download all necessary cache files, an
    module load singularity
    ```
 
-2. Build `Singularity` image:
-   ```
-   singularity pull docker://ensemblorg/ensembl-vep:latest
-   mv ensembl-vep_latest.sif vep.sif
-   ```
-   This step may take around 1h.
-   
-   P.S. If you need to install additional packages/modules into the container, you can do this by creating Singularity's `*.def` definition file with additional post-installation commands and running `singularity build --remote <custom VEP container name>.sif <filename>.def`. Example of the definition file:
+2. Build `Singularity` image.
+
+   Create `vep.def` Singularity definition file with the following content:
    ```
    Bootstrap: docker
    From: ensemblorg/ensembl-vep:latest
    
    %post
         apt-get update -y
+        apt-get install -y bcftools
         apt-get install -y libdbd-sqlite3-perl
    ```
+
+   Build VEP Singularity container:
+   ```
+   singularity build --remote vep.sif vep.def
+   ```
+   
+   This step may take around 1h.
 
 3. Download VEP cache files into local `vep_cache` directory:
    ```
