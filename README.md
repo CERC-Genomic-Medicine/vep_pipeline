@@ -17,7 +17,7 @@ This section describes how to set up VEP, download all necessary cache files, an
    module load singularity
    ```
 
-2. Build `Singularity` image.
+2. Build `Singularity` image with additional tools (e.g. `bcftools` and `DBD::SQLite`).
 
    Create `vep.def` Singularity definition file with the following content:
    ```
