@@ -7,6 +7,17 @@ The following software is required:
 - Nextflow (tested with version 21)
 -  **Only when using `enable_summary = true`**. Python 3 (tested with version 3.7.7) with the following packages: pysam, nbconvert, ipykernel, pandas.
 
+## Workflow
+```diff
+- Important!
+@@ Your input VCFs must be indexed and have corresponding `.tbi` files @@
+@@ Input VCFs from the same study must have the same prefix @@
+@@ Input VCFs can be split by chromosome as long as they all have the same prefix @@
+```
+
+
+![Execution diagram](Diagram.png)
+
 ## 1. Installation
 This section describes how to set up VEP, download all necessary cache files, and install LoFtee plugin.
 
