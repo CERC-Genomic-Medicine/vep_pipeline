@@ -5,7 +5,7 @@
 The following software is required:
 - Singularity (tested with version 3.8.5)
 - Nextflow (tested with version 21)
-- Python 3 (tested with version 3.7.7) with the following packages: pysam, nbconvert, ipykernel, pandas.
+-  **Only when using `enable_summary = true`**. Python 3 (tested with version 3.7.7) with the following packages: pysam, nbconvert, ipykernel, pandas.
 
 ## 1. Installation
 This section describes how to set up VEP, download all necessary cache files, and install LoFtee plugin.
@@ -130,6 +130,7 @@ After above steps, your local `vep_cache` directory should be similar to this:
      * `params.vep_cache` -- full path to your local `vep_cache` directory.
      * `params.vep_flags` -- flags you want to pass to VEP.
      * `params.loftee_flags` -- comma-separated list of additional LoFtee flags (with leading comma). Flags `loftee_path`, `gerp_bigwig`, `human_ancestor_fa`, and `conservation_file` are set automatically based on the selected `assembly`.
+     * `enable_summary` -- set to `true` if you want to generate HTML summary files.
      * `process.container` -- full path to the `Singularity` image file (see step 1.1.).
      * `executor.$slurm.queueSize` -- maximal number of SLURM jobs to submit at once.
   
