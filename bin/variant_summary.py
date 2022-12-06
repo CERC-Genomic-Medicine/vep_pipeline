@@ -110,14 +110,14 @@ def read_vcf(filename):
                 allele_effects.setdefault(int(allele_effect['ALLELE_NUM']) - 1, []).append(allele_effect)
             variant_filter  = 'PASS' if 'PASS' in record.filter else 'FAIL'
             for i, alt_allele in enumerate(record.alts):
-                if record.info['AN'] == 0: # skip if all genotypes are missing
+                if 'AN' in record.info and record.info['AN'] == 0: # skip if all genotypes are missing
                     continue
-                if record.info['AC'][i] == 0: # skip monomorphic
+                if 'AC' in record.info and record.info['AC'][i] == 0: # skip monomorphic
                     continue
                 variant_types = [ 'ALL' ] 
                 variant_types.append('SNV' if len(alt_allele) == 1 and len(record.ref) == 1 else 'INDEL')
                 variant_categories = [ 'ALL' ]
-                if record.info['AC'][i] == 1:
+                if 'AC' in record.info and record.info['AC'][i] == 1:
                     variant_categories.append('SINGLETONS')                
                 seq_5mer = set()
                 rsIds = set()
