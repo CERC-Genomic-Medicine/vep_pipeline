@@ -23,14 +23,15 @@ This section describes how to set up VEP, download all necessary cache files, an
 
 ### 1.1. Setting up VEP
 
-1. Load `Singularity` module:
+1. Load `apptainer` module:
    ```
-   module load singularity
+   module load apptainer
    ```
 
-2. Build `Singularity` image with additional tools (e.g. `samtools`, `bcftools` and `DBD::SQLite`).
+2. Build the SIF image with additional tools: `samtools`, `bcftools`, and `DBD::SQLite`.
 
-   Create `vep.def` Singularity definition file with the following content:
+   Use [SylabsCloud](https://cloud.sylabs.io/) free Remote Builder service to create the SIF image remotely.
+   Specify the following in your definition file (i.e. `.def` file):
    ```
    Bootstrap: docker
    From: ensemblorg/ensembl-vep:latest
@@ -42,18 +43,28 @@ This section describes how to set up VEP, download all necessary cache files, an
         apt-get install -y libdbd-sqlite3-perl
    ```
 
-   Build VEP Singularity container:
+   After you built the SIF image using the Remote Builder web interface, pull the image to the cluster.
+
+   Confirm that the `SylabsCloud` remote service is available (if not, you will need to add it):
    ```
-   singularity build --remote vep.sif vep.def
+   apptainer remote list
+   ```
+
+   Login to the SylabsCloud remote service
+   ```
+   apptainer remote login SylabsCloud
    ```
    
-   This step may take around 1h.
+   Pull the SIF image using the repository name you speficied when creating the SIF image:
+   ```
+   apptainer pull vep.sif library://dtaliun/remote-builds/vep:23may2024
+   ```
 
-3. Download VEP cache files into local `vep_cache` directory:
+4. Download VEP cache files into local `vep_cache` directory:
    ```
    mkdir `pwd`/vep_cache
    export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-   singularity run -B `pwd`/vep_cache:/opt/vep/.vep vep.sif INSTALL.pl -a cf -s homo_sapiens -y GRCh38 -c /opt/vep/.vep
+   apptainer run -B `pwd`/vep_cache:/opt/vep/.vep vep.sif INSTALL.pl -a cf -s homo_sapiens -y GRCh38 -c /opt/vep/.vep
    ```
    This step may take more than 1h.
 
