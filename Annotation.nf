@@ -51,14 +51,14 @@ process annotate_chunks {
 		"""
 		export PERL5LIB=/opt/vep/.vep/Plugins/:\$PERL5LIB
 		loftee_args=human_ancestor_fa:/opt/vep/.vep/loftee_db_${params.assembly}/human_ancestor.fa.gz,gerp_bigwig:/opt/vep/.vep/loftee_db_${params.assembly}/gerp_conservation_scores.homo_sapiens.GRCh38.bw,conservation_file:/opt/vep/.vep/loftee_db_${params.assembly}/loftee.sql${params.loftee_flags}
-		bcftools view ${params.drop_genotypes} ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} --plugin CADD,/opt/vep/.vep/CADD_${params.assembly}/whole_genome_SNVs.tsv.gz,/opt/vep/.vep/CADD_${params.assembly}/InDels.tsv.gz --plugin CONTEXT ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.log
+		bcftools view ${params.drop_genotypes} ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} --plugin CADD,/opt/vep/.vep/CADD_${params.assembly}/whole_genome_SNVs.tsv.gz,/opt/vep/.vep/CADD_${params.assembly}/gnomad.genomes.r4.0.indel.tsv.gz --plugin CONTEXT ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.log
 		sanity_check.py -a ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.vcf.gz
 	 	"""
 	else if (params.assembly == "GRCh37")
 		"""
 		export PERL5LIB=/opt/vep/.vep/Plugins/:\$PERL5LIB
 		loftee_args=human_ancestor_fa:/opt/vep/.vep/loftee_db_${params.assembly}/human_ancestor.fa.gz,conservation_file:/opt/vep/.vep/loftee_db_${params.assembly}/phylocsf_gerp.sql${params.loftee_flags}
-		bcftools view ${params.drop_genotypes} ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} --plugin CADD,/opt/vep/.vep/CADD_${params.assembly}/whole_genome_SNVs.tsv.gz,/opt/vep/.vep/CADD_${params.assembly}/InDels.tsv.gz --plugin CONTEXT ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.log
+		bcftools view ${params.drop_genotypes} ${vcf} ${chrom}:${start}-${stop} | vep --cache --offline --assembly ${params.assembly} --format vcf --vcf --compress_output bgzip --force_overwrite --dir_cache /opt/vep/.vep/ --plugin LoF,loftee_path:/opt/vep/.vep/loftee_${params.assembly},\${loftee_args} --dir_plugins /opt/vep/.vep/loftee_${params.assembly} --plugin CADD,/opt/vep/.vep/CADD_${params.assembly}/whole_genome_SNVs.tsv.gz,/opt/vep/.vep/CADD_${params.assembly}/gnomad.genomes-exomes.r4.0.indel.tsv.gz --plugin CONTEXT ${params.vep_flags} --warning_file STDERR --output_file STDOUT > ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.vcf.gz 2> ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.log
 		sanity_check.py -a ${vcf.getSimpleName()}.${chrom}_${start}_${stop}.vep.vcf.gz
 		"""
 	else
@@ -165,7 +165,7 @@ workflow {
 	windows = Channel.from(range.by(step)).map { w -> [ w, w + step - 1 ] }
 
 	vcfs = Channel.fromPath(params.vcfs).map{ vcf -> [ vcf, vcf + ".tbi" ] }
-	vcfs_chunks = vcf_by_chrom(vcfs).flatMap({ chroms, vcf, vcf_index -> chroms.split(',').collect { [it, vcf, vcf_index] }}).toSortedList({a, b -> a[0] <=> b[0]}).flatMap({it}).combine(windows)
+	vcfs_chunks = vcf_by_chrom(vcfs).flatMap({ chroms, vcf, vcf_index -> chroms.split(',').collect { [it, vcf, vcf_index] }}).filter { it[0] =~ /^(chr)?(X|Y|[1-9][0-9]?)$/ }.toSortedList({a, b -> a[0] <=> b[0]}).flatMap({it}).combine(windows)
 
 	vcfs_chunks_annotated = annotate_chunks(vcfs_chunks).annotations
 	vcfs_annotated = concatenate_chunks(vcfs_chunks_annotated.groupTuple(by: [0, 1]))
