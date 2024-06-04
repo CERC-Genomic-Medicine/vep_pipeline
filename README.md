@@ -3,22 +3,22 @@
 ## Prerequisites
 
 The following software is required:
-- Singularity (tested with version 3.8.5)
-- Nextflow (tested with version 21)
+- Apptainer (tested with version 1.2.4)
+- Nextflow (tested with version 23)
 -  **Only when using `enable_summary = true`**. Python 3 (tested with version 3.7.7) with the following packages: pysam, nbconvert, ipykernel, pandas.
 
 ## Workflow
-```diff
-- Important!
-@@ Your input VCFs must be indexed and have corresponding `.tbi` files @@
-@@ Input VCFs from the same study must have the same prefix @@
-@@ Input VCFs can be split by chromosome as long as they all have the same prefix @@
-```
-
+> [!CAUTION]
+> - Your input VCFs must be indexed and have corresponding `.tbi` files
+> - Input VCFs from the same study must have the same prefix, which can't be a chromosome name.
+> - Input VCFs can be split by chromosome as long as they all have the same prefix e.g., [prefix].chr1, [prefix].chr2, ..., [prefix].chrY.
 
 ![Execution diagram](Diagram.png)
 
 ## 1. Installation
+> [!NOTE]
+> If you are a member of the CERC-Genomic-Medicine team, then all necessary files to run VEP are already installed on the server. Consult with your colleagues on where to find them.
+
 This section describes how to set up VEP, download all necessary cache files, and install LoFtee plugin.
 
 ### 1.1. Setting up VEP
@@ -159,7 +159,7 @@ After above steps, your local `vep_cache` directory should be similar to this:
 3. Run pipeline:
    ```
    module load nextflow
-   module load singularity
+   module load apptainer
    nextflow run Annotation.nf -w ~/scratch/work_directory
    ```
    Important: when working on Compute Canada HPC, set working directory to ~/scratch/\<new directory name\>. This will speed up IO and also save space on your `project` partition. After the execution, if there were no errors and you are happy with the results, you can remove this working directory.
@@ -173,7 +173,7 @@ After above steps, your local `vep_cache` directory should be similar to this:
    Or submit a batch job with nextflow command e.g.:
    ```
    module load nextflow
-   module load singularity
+   module load apptainer
    sbatch --time=2:00:00 --ntasks=1 --mem-per-cpu=16G --wrap="nextflow run Annotation.nf -w ~/scratch/work_directory"
    ```
    Make sure you specify enough time. VEP annotation is typically fast, but total `nextflow` execution time will depend on how busy the SLURM queue is.
