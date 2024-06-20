@@ -164,7 +164,32 @@ After above steps, your local `vep_cache` directory should be similar to this:
    ```
    Important: when working on Compute Canada HPC, set working directory to ~/scratch/\<new directory name\>. This will speed up IO and also save space on your `project` partition. After the execution, if there were no errors and you are happy with the results, you can remove this working directory.
   
-## 3. Known pitfalls
+## 3. Custom VCFs
+
+In this section, we will explain how to integrate custom VCF files, such as gnomAD v2, into your VEP command line using this pipeline.
+
+1. Download the custom VCF into the cache. As an exemple, we downloaded the gnomAD v2 VCF file which is located at:
+ ```
+   /path/to/vep_cache/custom_vcf/gnomad.exomes.r2.1.1.sites.liftover_grch38.PASS.noVEP.vcf.gz
+ ```
+
+2. To integrate the custom VCF into your VEP command, add the relevant flags to the `nextflow.config` file under the `--custom` flag. Below is an example configuration:
+```
+vep_flags = "--sift b --polyphen b --ccds --uniprot --hgvs --symbol --numbers --domains --regulatory --canonical --protein --biotype --af --af_1kg --af_gnomade --af_gnomadg --pubmed --shift_hgvs 0 --allele_number --buffer_size 10000 --custom /path/to/vep_cache/custom_vcf/gnomad.exomes.r2.1.1.sites.liftover_grch38.PASS.noVEP.vcf.gz,gnomad_exomes,vcf,exact,0,AN_nfe,AC_nfe,non_cancer_AN_nfe,non_cancer_AC_nfe"
+```
+In this case, the custom flag integrates the gnomAD v2 VCF with the following parameters:
+
+    path: Path to the custom VCF file.
+    identifier: A name for the custom annotation (e.g., gnomad_exomes).
+    type: The file type (e.g., vcf).
+    match_type: How to match the data (e.g., exact).
+    cols: Columns to include from the VCF (e.g., 0,AN_nfe,AC_nfe,non_cancer_AN_nfe,non_cancer_AC_nfe).
+
+
+3. Run pipeline.
+     Once you have updated your nextflow.config, run your VEP command as usual. The custom VCF annotations will be included in the output.
+
+## 4. Known pitfalls
 
 1. You may not be able to execute `nextflow` directly from the Compute Canada login nodes due to the 8Gb memory limit per user. One alternative is to start interactive slurm job and submit all commands from it e.g.:
    ```
