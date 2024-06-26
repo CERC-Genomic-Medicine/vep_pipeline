@@ -175,7 +175,7 @@ In this section, we will explain how to integrate custom VCF files, such as gnom
 
 2. To integrate the custom VCF into your VEP command, add the relevant flags to the `nextflow.config` file under the `--custom` flag. Below is an example configuration:
 ```
-vep_flags = "--sift b --polyphen b --ccds --uniprot --hgvs --symbol --numbers --domains --regulatory --canonical --protein --biotype --af --af_1kg --af_gnomade --af_gnomadg --pubmed --shift_hgvs 0 --allele_number --buffer_size 10000 --custom /path/to/vep_cache/custom_vcf/gnomad.exomes.r2.1.1.sites.liftover_grch38.PASS.noVEP.vcf.gz,gnomad_exomes,vcf,exact,0,AN_nfe,AC_nfe,non_cancer_AN_nfe,non_cancer_AC_nfe"
+vep_flags = "--sift b --polyphen b --ccds --uniprot --hgvs --symbol --numbers --domains --regulatory --canonical --protein --biotype --af --af_1kg --af_gnomade --af_gnomadg --pubmed --shift_hgvs 0 --allele_number --buffer_size 10000 --custom /opt/vep/.vep/custom_vcf/gnomad.exomes.r2.1.1.sites.liftover_grch38.PASS.noVEP.vcf.gz,gnomad_exomes,vcf,exact,0,AN_nfe,AC_nfe,non_cancer_AN_nfe,non_cancer_AC_nfegnomad.exomes.r2.1.1.sites.liftover_grch38.PASS.noVEP.vcf.gz,gnomad_exomes,vcf,exact,0,AN_nfe,AC_nfe,non_cancer_AN_nfe,non_cancer_AC_nfe"
 ```
 In this case, the custom flag integrates the gnomAD v2 VCF with the following parameters:
 
